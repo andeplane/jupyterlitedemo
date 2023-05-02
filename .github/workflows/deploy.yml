@@ -22,12 +22,16 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
+      - name: Build pyodide-kernel
+        run: |
+          cd pyodide-kernel
+          npm run cognitebuild
       - name: Install the dependencies
         run: |
           python -m pip install -r requirements.txt
+          python -m pip install $(pwd)/pyodide-kernel
       - name: Build the JupyterLite site
         run: |
-          echo "Anders 4" $(pwd)
           cp README.md content
           jupyter lite build --contents content --output-dir dist
       - name: Upload artifact
