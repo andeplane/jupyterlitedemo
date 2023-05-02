@@ -335,65 +335,65 @@ export namespace PyodideKernel {
 const initTokenStorageAndAuthHandler = () => {
   console.log('Doing init');
   // todo need destroyer when unmounting
-  // window.addEventListener(
-  //   'message',
-  //   (event) => {
-  //     console.log('Got event: ', event);
-  //     console.log('Got event data type: ', typeof event.data);
-  //     if (
-  //       typeof event.data === 'object' &&
-  //       'token' in event.data &&
-  //       'baseUrl' in event.data &&
-  //       'project' in event.data
-  //     ) {
-  //       storeToken(event.data);
-  //     }
-  //   },
-  //   false
-  // );
+  window.addEventListener(
+    'message',
+    (event) => {
+      console.log('Got event: ', event);
+      console.log('Got event data type: ', typeof event.data);
+      if (
+        typeof event.data === 'object' &&
+        'token' in event.data &&
+        'baseUrl' in event.data &&
+        'project' in event.data
+      ) {
+        storeToken(event.data);
+      }
+    },
+    false
+  );
   // communicate if in iframe to parent (top)
-  // if (window.top) {
-  //   window.top.postMessage('getToken', '*');
-  // }
+  if (window.top) {
+    window.top.postMessage('getToken', '*');
+  }
 };
 
-// const storeToken = ({
-//   token,
-//   baseUrl,
-//   project,
-//   email,
-// }: {
-//   token: string;
-//   baseUrl: string;
-//   project: string;
-//   email?: string;
-// }) => {
-//   mixpanel.track('DSHubLite.initKernel', { baseUrl, project, distinct_id: email });
+const storeToken = ({
+  token,
+  baseUrl,
+  project,
+  email,
+}: {
+  token: string;
+  baseUrl: string;
+  project: string;
+  email?: string;
+}) => {
+  mixpanel.track('DSHubLite.initKernel', { baseUrl, project, distinct_id: email });
 
-//   // Open (or create) the database
-//   const open = indexedDB.open('CogniteVault', 1);
+  // Open (or create) the database
+  const open = indexedDB.open('CogniteVault', 1);
 
-//   // Create the schema
-//   open.onupgradeneeded = function () {
-//     const db = open.result;
-//     db.createObjectStore('TokenStore', { keyPath: 'id' });
-//   };
+  // Create the schema
+  open.onupgradeneeded = function () {
+    const db = open.result;
+    db.createObjectStore('TokenStore', { keyPath: 'id' });
+  };
 
-//   open.onsuccess = async function () {
-//     console.log('success');
-//     // Start a new transaction
-//     const db = open.result;
-//     const tx = db.transaction('TokenStore', 'readwrite');
-//     const store = tx.objectStore('TokenStore');
+  open.onsuccess = async function () {
+    console.log('success');
+    // Start a new transaction
+    const db = open.result;
+    const tx = db.transaction('TokenStore', 'readwrite');
+    const store = tx.objectStore('TokenStore');
 
-//     // Add token data
-//     store.put({ id: 'token', value: token });
-//     store.put({ id: 'baseUrl', value: baseUrl });
-//     store.put({ id: 'project', value: project });
+    // Add token data
+    store.put({ id: 'token', value: token });
+    store.put({ id: 'baseUrl', value: baseUrl });
+    store.put({ id: 'project', value: project });
 
-//     // Close the db when the transaction is done
-//     tx.oncomplete = function () {
-//       db.close();
-//     };
-//   };
-// };
+    // Close the db when the transaction is done
+    tx.oncomplete = function () {
+      db.close();
+    };
+  };
+};
