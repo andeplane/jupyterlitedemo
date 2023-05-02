@@ -353,6 +353,7 @@ const initTokenStorageAndAuthHandler = () => {
   );
   // communicate if in iframe to parent (top)
   if (window.top) {
+    console.log('Will ask for token from parent')
     window.top.postMessage('getToken', '*');
   }
 };
@@ -369,7 +370,7 @@ const storeToken = ({
   email?: string;
 }) => {
   mixpanel.track('DSHubLite.initKernel', { baseUrl, project, distinct_id: email });
-
+  console.log("Will store token ", token, " baseUrl ", baseUrl, " project ", project, " email ", email);
   // Open (or create) the database
   const open = indexedDB.open('CogniteVault', 1);
 
